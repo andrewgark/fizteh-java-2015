@@ -10,7 +10,7 @@ public class Counter {
     }
 
     public static void main(String[] args) {
-        int n = 0;
+        Integer n = 0;
         try {
             if (args.length != 1) {
                 throw new ParameterException("Argument must be exactly one positive number");
@@ -33,9 +33,9 @@ public class Counter {
     private static Object monitor = new Object();
 
     private static class CounterThread extends Thread {
-        private int myId, nextId;
+        private Integer myId, nextId;
 
-        CounterThread(int id1, int id2) {
+        CounterThread(Integer id1, Integer id2) {
             myId = id1;
             nextId = id2;
         }

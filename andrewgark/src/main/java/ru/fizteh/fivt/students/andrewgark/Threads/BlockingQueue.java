@@ -9,68 +9,76 @@ public class BlockingQueue<T> {
     private int maxQueueSize;
     private Queue<T> queue;
     private Lock queueLock = new ReentrantLock();
-    private Lock actionLock = new ReentrantLock();
-    private Condition popWait = actionLock.newCondition();
-    private Condition pushWait = actionLock.newCondition();
+    private Lock offerLock = new ReentrantLock();
+    private Lock takeLock = new ReentrantLock();
+    //private Condition popWait = offerLock.newCondition();
+    //private Condition pushWait = actionLock.newCondition();
+    private Object pushWait = new Object();
+    private Object popWait = new Object();
 
     public void offer(List<T> list) {
-        actionLock.lock();
+        offerLock.lock();
         try {
-            boolean added = false;
-            while (!added) {
-                try {
-                    queueLock.lock();
-                    if (queue.size() + list.size() <= maxQueueSize) {
-                        queue.addAll(list);
-                        added = true;
+            Integer last = 0;
+            while (last != list.size()) {
+                synchronized (popWait) {
+                    while (queue.size() == maxQueueSize) {
+                        try {
+                            popWait.wait();
+                        } catch (InterruptedException e) {
+                            System.err.println(e.getMessage());
+                            System.exit(1);
+                        }
                     }
-                } finally {
-                    queueLock.unlock();
-                }
-                if (!added) {
                     try {
-                        popWait.await();
-                    } catch (InterruptedException ex) {
-                        return;
+                        queueLock.lock();
+                        while (last < Integer.min(last + maxQueueSize - queue.size(), list.size())) {
+                            queue.add(list.get(last));
+                            last++;
+                        }
+                    } finally {
+                        queueLock.unlock();
                     }
                 }
             }
         } finally {
-            pushWait.signalAll();
-            actionLock.unlock();
+            synchronized (pushWait) {
+                pushWait.notifyAll();
+            }
+            offerLock.unlock();
         }
     }
 
     public List<Object> take(int n) {
-        actionLock.lock();
+        takeLock.lock();
         try {
             List<Object> ans = new ArrayList<>();
-            while (ans.size() < n) {
-                try {
-                    queueLock.lock();
-                    if (queue.size() >= n) {
-                        for (int i = 0; i < n; i++) {
-                            ans.add(queue.poll());
+            while (ans.size() != n) {
+                synchronized (pushWait) {
+                    while (queue.size() == 0) {
+                        try {
+                            pushWait.wait();
+                        } catch (InterruptedException e) {
+                            System.err.println(e.getMessage());
+                            System.exit(1);
                         }
                     }
-                } finally {
-                    queueLock.unlock();
-                    if (ans.size() == n) {
-                        return ans;
-                    }
-                }
-                if (ans.size() < n) {
                     try {
-                        pushWait.await();
-                    } catch (InterruptedException ex) {
-                        return null;
+                        queueLock.lock();
+                        while (queue.size() > 0 && ans.size() != n) {
+                            ans.add(queue.poll());
+                        }
+                    } finally {
+                        queueLock.unlock();
                     }
                 }
             }
             return ans;
         } finally {
-            popWait.signalAll();
-            actionLock.unlock();
+            synchronized (popWait) {
+                popWait.notifyAll();
+            }
+            takeLock.unlock();
         }
     }
 

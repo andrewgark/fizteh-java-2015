@@ -15,7 +15,7 @@ public class Rollcall {
     private static CyclicBarrier askingThreads, waitingAnswers;
 
     public static void main(String[] args) {
-        int n = 0;
+        Integer n = 0;
         try {
             if (args.length != 1) {
                 throw new ParameterException("Argument must be exactly one positive number");
@@ -62,7 +62,7 @@ public class Rollcall {
     }
 
     private static class RollcallThread extends Thread {
-        private boolean answer;
+        private Boolean answer;
         private Random rand = new Random();
 
         @Override
