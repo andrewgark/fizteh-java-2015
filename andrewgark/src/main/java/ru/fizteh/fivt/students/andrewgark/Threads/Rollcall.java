@@ -17,8 +17,9 @@ public class Rollcall {
     public static void main(String[] args) {
         int n = 0;
         try {
-            if (args.length != 1)
+            if (args.length != 1) {
                 throw new ParameterException("Argument must be exactly one positive number");
+            }
             n = Integer.valueOf(args[0]);
             if (n <= 0) {
                 throw new ParameterException("Argument must be positive");
@@ -42,14 +43,14 @@ public class Rollcall {
             allYes = true;
             try {
                 askingThreads.await();
-            } catch (InterruptedException | BrokenBarrierException e ) {
+            } catch (InterruptedException | BrokenBarrierException e) {
                 System.err.println(e.getMessage());
                 System.exit(1);
             }
             askingThreads.reset();
             try {
                 waitingAnswers.await();
-            } catch (InterruptedException | BrokenBarrierException e ) {
+            } catch (InterruptedException | BrokenBarrierException e) {
                 System.err.println(e.getMessage());
                 System.exit(1);
             }
@@ -69,7 +70,7 @@ public class Rollcall {
             while (true) {
                 try {
                     askingThreads.await();
-                } catch (InterruptedException | BrokenBarrierException e ) {
+                } catch (InterruptedException | BrokenBarrierException e) {
                     System.err.println(e.getMessage());
                     System.exit(1);
                 }
@@ -84,7 +85,7 @@ public class Rollcall {
                 }
                 try {
                     waitingAnswers.await();
-                } catch (InterruptedException | BrokenBarrierException e ) {
+                } catch (InterruptedException | BrokenBarrierException e) {
                     System.err.println(e.getMessage());
                     System.exit(1);
                 }

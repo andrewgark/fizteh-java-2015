@@ -12,8 +12,9 @@ public class Counter {
     public static void main(String[] args) {
         int n = 0;
         try {
-            if (args.length != 1)
+            if (args.length != 1) {
                 throw new ParameterException("Argument must be exactly one positive number");
+            }
             n = Integer.valueOf(args[0]);
             if (n <= 0) {
                 throw new ParameterException("Argument must be positive");
@@ -34,9 +35,9 @@ public class Counter {
     private static class CounterThread extends Thread {
         private int myId, nextId;
 
-        CounterThread(int _myId, int _nextId) {
-            myId = _myId;
-            nextId = _nextId;
+        CounterThread(int id1, int id2) {
+            myId = id1;
+            nextId = id2;
         }
 
         @Override

@@ -74,8 +74,8 @@ public class BlockingQueue<T> {
         }
     }
 
-   public BlockingQueue(int _maxQueueSize) {
-       maxQueueSize = _maxQueueSize;
+   public BlockingQueue(int maxSize) {
+       maxQueueSize = maxSize;
        queue = new ArrayDeque();
     }
 }
