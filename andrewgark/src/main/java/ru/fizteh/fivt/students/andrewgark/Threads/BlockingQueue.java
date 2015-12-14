@@ -1,7 +1,6 @@
 package ru.fizteh.fivt.students.andrewgark.Threads;
 
 import java.util.*;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 

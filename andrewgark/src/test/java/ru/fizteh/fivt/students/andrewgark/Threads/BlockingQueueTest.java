@@ -5,8 +5,6 @@ import org.junit.Test;
 
 import java.util.*;
 
-import static java.lang.Thread.sleep;
-
 public class BlockingQueueTest {
     @Test
     public void testSimpleWithoutThreads() {
