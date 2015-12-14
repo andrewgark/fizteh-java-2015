@@ -41,10 +41,10 @@ public class BlockingQueue<T> {
         }
     }
 
-    public List<T> take(int n) {
+    public List<Object> take(int n) {
         actionLock.lock();
         try {
-            List ans = new ArrayList<>();
+            List<Object> ans = new ArrayList<>();
             while (ans.size() < n) {
                 try {
                     queueLock.lock();
@@ -76,6 +76,6 @@ public class BlockingQueue<T> {
 
    public BlockingQueue(int maxSize) {
        maxQueueSize = maxSize;
-       queue = new ArrayDeque();
+       queue = new ArrayDeque<T>();
     }
 }
