@@ -24,36 +24,35 @@ public class SelectStmt<T, R> implements Query<R> {
     private boolean isUnion;
     private boolean isJoin;
 
-    private void init(List<T> List, Class clazz, boolean isDistinct, Function[] functions,
-                      int limit, boolean isUnion, boolean isJoin, List<R> pastList) {
+    private void init(List<T> list, Class clazz, boolean isDistinct, Function[] functions,
+                      boolean isUnion, boolean isJoin, List<R> pastList) {
         this.list = new ArrayList<>();
-        this.list.addAll(List.stream().collect(Collectors.toList()));
+        this.list.addAll(list.stream().collect(Collectors.toList()));
         this.clazz = clazz;
         this.isDistinct = isDistinct;
         this.functions = functions;
-        this.limit = limit;
+        this.limit = -1;
         this.isUnion = isUnion;
         this.isJoin = isJoin;
         this.pastList = pastList;
     }
 
     @SafeVarargs
-    public SelectStmt(List<T> List, Class<R> clazz, boolean isDistinct, Function<T, ?>... functions) {
-        init(List, clazz, isDistinct, functions, -1, false, false, null);
+    public SelectStmt(List<T> list, Class<R> clazz, boolean isDistinct, Function<T, ?>... functions) {
+        init(list, clazz, isDistinct, functions, false, false, null);
     }
 
-    public SelectStmt(List<T> List, boolean isDistinct, Function<T, ?> first, Function<T, ?> second) {
-        init(List, List.get(0).getClass(), isDistinct,  new Function[]{first, second}, -1, false, true, null);
+    public SelectStmt(List<T> list, boolean isDistinct, Function<T, ?> first, Function<T, ?> second) {
+        init(list, list.get(0).getClass(), isDistinct,  new Function[]{first, second}, false, true, null);
     }
 
     @SafeVarargs
-    public SelectStmt(List<R> pastList, List<T> List, Class<R> clazz, boolean isDistinct,
-                      Function<T, ?>... functions) {
-        init(List, clazz, isDistinct, functions, -1, true, false, pastList);
+    public SelectStmt(List<R> pastList, List<T> list, Class<R> clazz, boolean isDistinct, Function<T, ?>... functions) {
+        init(list, clazz, isDistinct, functions, true, false, pastList);
     }
 
-    public SelectStmt(List<R> pastList, List<T> List, boolean isDistinct, Function<T, ?> first, Function<T, ?> second) {
-        init(List, List.get(0).getClass(), isDistinct, new Function[]{first, second}, -1, true, true, pastList);
+    public SelectStmt(List<R> pastList, List<T> list, boolean isDistinct, Function<T, ?> first, Function<T, ?> second) {
+        init(list, list.get(0).getClass(), isDistinct, new Function[]{first, second}, true, true, pastList);
     }
 
     public SelectStmt<T, R> where(Predicate<T> predicate) {
